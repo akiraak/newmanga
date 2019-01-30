@@ -1,1 +1,3 @@
 # newmanga
+
+## setup
