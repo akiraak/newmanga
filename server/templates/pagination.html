@@ -1,0 +1,66 @@
+{% macro render(url, currentPage, maxPage) %}
+  {% set printMaxPage = 7 %}
+
+  {% set startPage = (currentPage - (printMaxPage / 2)) %}
+  {% if startPage < 1 %}
+    {% set startPage = 1 %}
+  {% endif %}
+
+  {% set endPage = (currentPage + (printMaxPage /2)) %}
+  {% if endPage > maxPage %}
+    {% set endPage = maxPage %}
+  {% endif %}
+
+  <nav aria-label="...">
+    <ul class="pagination pagination-sm">
+      {% if currentPage <= 1 %}
+        <li class="page-item disabled">
+          <a class="page-link" href="{{ url }}?p=1">&lt;&lt;</a>
+        </li>
+      {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url }}?p={{ currentPage - 1 }}">&lt;&lt;</a>
+        </li>
+      {% endif %}
+
+      {% if startPage >= 2 %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url }}?p=1">1</a>
+        </li>
+        <li class="page-item disabled">
+          <a class="page-link" href="#">...</a>
+        </li>
+      {% endif %}
+
+      {% for i in range(startPage|int, (endPage + 1)|int) %}
+        {% if i == currentPage %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">{{ i }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url }}?p={{ i }}">{{ i }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+
+      {% if endPage <= (maxPage - (printMaxPage / 2) + 3) %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">...</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="{{ url }}?p={{ maxPage }}">{{ maxPage }}</a>
+        </li>
+      {% endif %}
+      {% if currentPage >= maxPage %}
+        <li class="page-item disabled">
+          <a class="page-link" href="#">&gt;&gt;</a>
+        </li>
+      {% else %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url }}?p={{ currentPage + 1 }}">&gt;&gt;</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endmacro %}
