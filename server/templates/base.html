@@ -24,21 +24,35 @@
       .navbar {
         background-color: #ea8810!important;
       }
+      .container {
+        max-width: initial;
+        margin-top: 80px;
+      }
     </style>
     {% block style %}{% endblock %}
   </head>
   <body>
 <header>
-  <div class="navbar navbar-dark shadow-sm">
-    <div class="container d-flex justify-content-between">
-      <a href="/" class="navbar-brand d-flex align-items-center">
-        <strong>New Manga</strong>
-      </a>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="/">New Manga</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">All <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/userbooks">User</a>
+        </li>
+      </ul>
     </div>
-  </div>
+  </nav>
 </header>
 
-{% block main %}{% endblock %}
+<main role="main">
+    <div class="container">
+    {% block main %}{% endblock %}
+  </div>
+</main>
 
 <footer class="text-muted">
   <div class="container">

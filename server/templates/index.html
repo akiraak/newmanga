@@ -3,9 +3,6 @@
 
 {% block style %}
 <style>
-  .container {
-    max-width: initial;
-  }
   .pagination {
     margin: 30px 0;
   }
@@ -56,26 +53,22 @@
 {% endblock %}
 
 {% block main %}
-<main role="main">
-  <div class="container">
-    {{ pagination.render('/', page, pageMax) }}
-    <div class="books">
-      {% for book in books %}
-      <div class="book">
-        <a href="{{ book.url }}" target="_blank">
-          <div class="thumbnail-container">
-            <img class="thumbnail rounded" src="{{ book.image }}">
-            <div class="thumbnail-date">{{ book.date }}</div>
-          </div>
-          <div class="book-title">{{ book.title }}</div>
-        </a>
+{{ pagination.render('/', page, pageMax) }}
+<div class="books">
+  {% for book in books %}
+  <div class="book">
+    <a href="{{ book.url }}" target="_blank">
+      <div class="thumbnail-container">
+        <img class="thumbnail rounded" src="{{ book.image }}">
+        <div class="thumbnail-date">{{ book.date }}</div>
       </div>
-      {% endfor %}
-    </div>
-    <div class="clear-float-left"></div>
-    {{ pagination.render('/', page, pageMax) }}
+      <div class="book-title">{{ book.title }}</div>
+    </a>
   </div>
-</main>
+  {% endfor %}
+</div>
+<div class="clear-float-left"></div>
+{{ pagination.render('/', page, pageMax) }}
 {% endblock %}
 
 {% block script %}

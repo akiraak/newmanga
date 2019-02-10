@@ -1,0 +1,5 @@
+.git
+.gitignore
+pyenv
+__pycache__
+var/db.sqlite

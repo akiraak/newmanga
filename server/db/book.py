@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship
 from .db import db
 
 
@@ -17,6 +18,7 @@ class Book(db.Model):
     tag4 = db.Column(db.Text(), nullable=True)
     tag4url = db.Column(db.Text(), nullable=True)
     html = db.Column(db.Text(), nullable=True)
+    userBooks = relationship("UserBook", back_populates="book")
 
     def __repr__(self):
         return '<Book {}:{}>'.format(self.asin, self.title)

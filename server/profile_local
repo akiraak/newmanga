@@ -1,0 +1,5 @@
+#!/bin/sh
+export FLASK_ENV=development
+export FLASK_APP=newmanga.py
+export SQLALCHEMY_DATABASE_URI="sqlite:////mnt/c/Users/akira/Programs/newmanga/var/db.sqlite"
+export ADMIN_ROOT_PARH="admin"

@@ -2,8 +2,9 @@ import datetime
 import lxml.html
 import re
 import requests
+from sqlalchemy import or_
 import time
-from .db import db, Book, Setting
+from .db import db, Book, User, UserBook, Setting
 
 
 def bookInfoFromHtml(tree):
@@ -67,9 +68,11 @@ def booksFromHtml(tree):
 
 def fetchBooks():
     setting = Setting.get()
+    updateBookCount = 0
     for (i, pageNo) in enumerate(range(setting.fetchLastPage, 200)):
         time.sleep(10)
-        url = 'https://www.amazon.co.jp/s/ref=sr_nr_p_n_publication_date_3?fst=as%3Aoff&rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cn%3A2278488051%2Cp_n_publication_date%3A2315442051%7C2285539051&bbn=2278488051&ie=UTF8&qid=1495328200&page={}'.format(pageNo + 1)
+        #url = 'https://www.amazon.co.jp/s/ref=sr_nr_p_n_publication_date_3?fst=as%3Aoff&rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cn%3A2278488051%2Cp_n_publication_date%3A2315442051%7C2285539051&bbn=2278488051&ie=UTF8&qid=1495328200&page={}'.format(pageNo + 1)
+        url = 'https://www.amazon.co.jp/gp/search/ref=sr_pg_{}?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page={}&bbn=466280&ie=UTF8&qid=1549690134'.format(pageNo, pageNo)
         page = requests.get(url)
         tree = lxml.html.fromstring(page.content)
         books = tree.xpath("//li[contains(@class, 's-result-item')]")
@@ -107,4 +110,92 @@ def fetchBooks():
             book.tag4url = books[3]['url'] if len(books) > 3 else None
             book.html = html
             db.session.add(book)
+            db.session.commit()
+            updateBookCount += 1
+    updateUserbook()
+    return updateBookCount
+
+
+keywords = [
+    "HUNTER×HUNTER",
+    "ヴィンランド・サガ",
+    "落日のパトス",
+    "狼と香辛料",
+    "食戟のソーマ",
+    "小説家になる方法",
+    "重版出来",
+    "山と食欲と私",
+    "釣り船御前丸",
+    "木根さんの1人でキネマ",
+    "インベスターZ",
+    "波よ聞いてくれ",
+    "食戟のソーマ",
+    "アルキメデスの大戦",
+    "ふらいんぐうぃっち",
+    "亜人",
+    "宇宙兄弟",
+    "BLUE GIANT",
+    "ベイビーステップ",
+    "ハイスコアガール",
+    "蛇蔵",
+    "僕らはみんな河合荘",
+    "のの湯",
+    "百姓貴族",
+    "ドロヘドロ",
+    "からかい上手の高木さん",
+    "乙嫁語り",
+    "ばらかもん",
+    "君に届け",
+    "のんのんびより",
+    "海街diary",
+    "後遺症ラジオ",
+    "ワンパンマン",
+    "いぶり暮らし",
+    "ヒストリエ",
+    "つれづれダイアリー",
+    "ダンジョン飯",
+    "メイドインアビス",
+    "ドメスティックな彼女",
+    "東京喰種",
+    "進撃の巨人",
+    "アオバ自転車店",
+    "ちはやふる",
+    "甘々と稲妻",
+    "ろんぐらいだぁす",
+    "はたらく細胞",
+    "猫のお寺の知恩さん",
+    "ウーパ",
+    "ゆるキャン",
+    "平方イコルスン",
+    "山賊ダイアリー",
+    "銀の匙",
+    "味噌汁でカンパイ",
+    "放課後さいころ倶楽部",
+    "ふしぎの国のバード",
+    "レイリ",
+    "3月のライオン",
+    "コウノドリ",
+    "南鎌倉高校女子自転車部",
+    "あげくの果てのカノン",
+    "徒然チルドレン",
+    "ぐらんぶる",
+    "ドラゴン桜",
+    "おひ釣りさま",
+    "放課後ていぼう日誌",
+    "MISS CAST",
+    "MFゴースト",
+    "首都高SPL",
+    "あまんちゅ！",
+    "ガタガール",
+]
+
+
+def updateUserbook():
+    UserBook.query.delete()
+    user = User.query.first()
+    if user:
+        books = Book.query.filter(or_(Book.title.like('%{}%'.format(k)) for k in keywords)).all()
+        for book in books:
+            userBook = UserBook(user_id=user.id, book_id=book.id)
+            db.session.add(userBook)
             db.session.commit()
