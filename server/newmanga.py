@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import math
 import os
 from .db import init_db, db, User, Book, UserBook, Setting, Log
-from .fetchbooks import fetchBooks
+from .fetchbooks import fetchBooksFomrUrl, updateBooks
 
 
 app = Flask(__name__)
@@ -62,22 +62,23 @@ def userbooks():
 
 @app.cli.command()
 def fetchbooks():
-    updateBookCount = fetchBooks()
+    updateBookCount = updateBooks()
     Log.add('Fetch {} books.'.format(updateBookCount))
 
 
-@app.route('/{}/createtable'.format(ADMIN_ROOT_PARH))
-def adminCreatetable():
-    db.create_all()
-    return "create table"
-
-
+@app.route('/{}/'.format(ADMIN_ROOT_PARH))
 @app.route('/{}/settings'.format(ADMIN_ROOT_PARH))
 def adminSettings():
     return render_template('settings.html',
         adminRootPath=ADMIN_ROOT_PARH,
         setting=Setting.get(),
         bookCount=Book.query.count())
+
+
+@app.route('/{}/createtable'.format(ADMIN_ROOT_PARH))
+def adminCreatetable():
+    db.create_all()
+    return "create table"
 
 
 @app.route('/{}/useradd'.format(ADMIN_ROOT_PARH))
@@ -113,3 +114,16 @@ def adminLogs():
         logs=logs,
         page=page,
         pageMax=pageMax)
+
+
+@app.route('/{}/fetchtest'.format(ADMIN_ROOT_PARH), methods=['GET', 'POST'])
+def adminFetchtest():
+    books = []
+    if request.method == 'POST':
+        url = request.form.get('url')
+        print(url)
+        books = fetchBooksFomrUrl(url)
+        print(len(books))
+    return render_template('admin_fetchtest.html',
+        adminRootPath=ADMIN_ROOT_PARH,
+        books=books)

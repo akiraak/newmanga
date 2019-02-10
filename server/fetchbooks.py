@@ -66,51 +66,72 @@ def booksFromHtml(tree):
     return books
 
 
-def fetchBooks():
-    setting = Setting.get()
-    updateBookCount = 0
-    for (i, pageNo) in enumerate(range(setting.fetchLastPage, 200)):
-        time.sleep(10)
-        #url = 'https://www.amazon.co.jp/s/ref=sr_nr_p_n_publication_date_3?fst=as%3Aoff&rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cn%3A2278488051%2Cp_n_publication_date%3A2315442051%7C2285539051&bbn=2278488051&ie=UTF8&qid=1495328200&page={}'.format(pageNo + 1)
-        url = 'https://www.amazon.co.jp/gp/search/ref=sr_pg_{}?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page={}&bbn=466280&ie=UTF8&qid=1549690134'.format(pageNo, pageNo)
+def fetchBooksFomrUrl(url):
+    books = []
+    try:
         page = requests.get(url)
         tree = lxml.html.fromstring(page.content)
-        books = tree.xpath("//li[contains(@class, 's-result-item')]")
-        print(i, pageNo, len(books))
-        if len(books) == 0:
-            print(url)
-        if len(books) == 0:
-            if i == 0:
-                setting.fetchLastPage = 1
-            else:
-                setting.fetchLastPage = pageNo
-            print(setting)
-            db.session.commit()
-            break
-        for book in books:
-            title, titleUrl, image, asin, date, books = bookInfoFromHtml(book)
+        domBooks = tree.xpath("//li[contains(@class, 's-result-item')]")
+        for domBook in domBooks:
+            title, titleUrl, image, asin, date, tags = bookInfoFromHtml(domBook)
             if not (title and titleUrl and image and asin and date):
                 continue
-            html = lxml.html.tostring(book)
-            book = Book.query.filter_by(asin = asin).first()
-            if not book:
-                book = Book()
+            book = Book()
             book.asin = asin
             book.title = title
             book.url = titleUrl
             book.image = image
             book.date = date
-            book.tag1 = books[0]['tag'] if len(books) > 0 else None
-            book.tag1url = books[0]['url'] if len(books) > 0 else None
-            book.tag2 = books[1]['tag'] if len(books) > 1 else None
-            book.tag2url = books[1]['url'] if len(books) > 1 else None
-            book.tag3 = books[2]['tag'] if len(books) > 2 else None
-            book.tag3url = books[2]['url'] if len(books) > 2 else None
-            book.tag4 = books[3]['tag'] if len(books) > 3 else None
-            book.tag4url = books[3]['url'] if len(books) > 3 else None
-            book.html = html
-            db.session.add(book)
+            book.tag1 = tags[0]['tag'] if len(tags) > 0 else None
+            book.tag1url = tags[0]['url'] if len(tags) > 0 else None
+            book.tag2 = tags[1]['tag'] if len(tags) > 1 else None
+            book.tag2url = tags[1]['url'] if len(tags) > 1 else None
+            book.tag3 = tags[2]['tag'] if len(tags) > 2 else None
+            book.tag3url = tags[2]['url'] if len(tags) > 2 else None
+            book.tag4 = tags[3]['tag'] if len(tags) > 3 else None
+            book.tag4url = tags[3]['url'] if len(tags) > 3 else None
+            book.html = lxml.html.tostring(domBook)
+            books.append(book)
+    except:
+        pass
+    return books
+
+
+def updateBooks():
+    setting = Setting.get()
+    updateBookCount = 0
+    for (i, pageNo) in enumerate(range(setting.fetchLastPage, 200)):
+        time.sleep(10)
+        url = 'https://www.amazon.co.jp/gp/search/?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page={}&bbn=466280&ie=UTF8&qid=1549690134'.format(pageNo)
+        books = fetchBooksFomrUrl(url)
+        print(i, pageNo, len(books))
+        if len(books) == 0:
+            if i == 0:
+                setting.fetchLastPage = 1
+            else:
+                setting.fetchLastPage = pageNo
             db.session.commit()
+            break
+        for book in books:
+            existBook = Book.query.filter_by(asin = book.asin).first()
+            if existBook:
+                book.asin = existBook.asin
+                book.title = existBook.title
+                book.url = existBook.url
+                book.image = existBook.image
+                book.date = existBook.date
+                book.tag1 = existBook.tag1
+                book.tag1url = existBook.tag1url
+                book.tag2 = existBook.tag2
+                book.tag2url = existBook.tag2url
+                book.tag3 = existBook.tag3
+                book.tag3url = existBook.tag3url
+                book.tag4 = existBook.tag4
+                book.tag4url = existBook.tag4url
+                book.html = existBook.html
+            else:
+                db.session.add(book)
+                db.session.commit()
             updateBookCount += 1
     updateUserbook()
     return updateBookCount

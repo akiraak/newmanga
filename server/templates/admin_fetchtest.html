@@ -1,0 +1,84 @@
+{% extends "admin_base.html" %}
+{% import 'pagination.html' as pagination %}
+
+{% block style %}
+<style>
+  .books {
+    margin-top: 20px;
+  }
+  .books .book {
+    list-style-type: none;
+    margin: 0 0 0 0;
+    float: left;
+    width: 160px;
+    height: 200px;
+  }
+  .books .book a {
+    text-decoration: none;
+  }
+  .books .book .thumbnail-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+  .books .book .thumbnail-container .thumbnail {
+    width: 100%;
+    height: 100%;
+  }
+  .books .book .thumbnail-container .thumbnail-date {
+    width: 118px;
+    position: absolute;
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 10px;
+    padding: 2px;
+    text-align: center;
+    margin: 0 0 0 21px;
+  }
+  .books .book-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    margin: 4px 10px 0 10px;
+  }
+  .clear-float-left {
+    clear: both;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div>
+  <form method="POST">
+    <div class="form-group">
+      <label for="url">Fetch Amazon URL</label>
+      <input class="form-control" name="url" id="url" value="https://www.amazon.co.jp/gp/search/?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page=1&bbn=466280&ie=UTF8&qid=1549690134">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>      
+</div>
+<h2>{{ books|count }}</h2>
+<div class="books">
+    {% for book in books %}
+    <div class="book">
+      <a href="{{ book.url }}" target="_blank">
+        <div class="thumbnail-container">
+          <img class="thumbnail rounded" src="{{ book.image }}">
+          <div class="thumbnail-date">{{ book.date }}</div>
+        </div>
+        <div class="book-title">{{ book.title }}</div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="clear-float-left"></div>
+  {% endblock %}
+
+{% block script %}
+<script>
+$(function() {
+});
+</script>
+{% endblock %}
