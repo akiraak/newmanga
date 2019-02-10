@@ -115,24 +115,23 @@ def updateBooks():
         for book in books:
             existBook = Book.query.filter_by(asin = book.asin).first()
             if existBook:
-                book.asin = existBook.asin
-                book.title = existBook.title
-                book.url = existBook.url
-                book.image = existBook.image
-                book.date = existBook.date
-                book.tag1 = existBook.tag1
-                book.tag1url = existBook.tag1url
-                book.tag2 = existBook.tag2
-                book.tag2url = existBook.tag2url
-                book.tag3 = existBook.tag3
-                book.tag3url = existBook.tag3url
-                book.tag4 = existBook.tag4
-                book.tag4url = existBook.tag4url
-                book.html = existBook.html
+                existBook.title = book.title
+                existBook.url = book.url
+                existBook.image = book.image
+                existBook.date = book.date
+                existBook.tag1 = book.tag1
+                existBook.tag1url = book.tag1url
+                existBook.tag2 = book.tag2
+                existBook.tag2url = book.tag2url
+                existBook.tag3 = book.tag3
+                existBook.tag3url = book.tag3url
+                existBook.tag4 = book.tag4
+                existBook.tag4url = book.tag4url
+                existBook.html = book.html
             else:
                 db.session.add(book)
-                db.session.commit()
             updateBookCount += 1
+        db.session.commit()
     updateUserbook()
     return updateBookCount
 
