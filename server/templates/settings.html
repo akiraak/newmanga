@@ -1,0 +1,37 @@
+{% extends "admin_base.html" %}
+
+{% block style %}
+<style>
+  .pagination {
+    margin: 30px 0;
+  }
+  .clear-float-left {
+    clear: both;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th>fetchLastPage</th>
+        <td>{{ setting.fetchLastPage }}</td>
+      </tr>
+      <tr>
+        <th>bookCount</th>
+        <td>{{ bookCount }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="clear-float-left"></div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(function() {
+});
+</script>
+{% endblock %}

@@ -74,16 +74,10 @@ def adminCreatetable():
 
 @app.route('/{}/settings'.format(ADMIN_ROOT_PARH))
 def adminSettings():
-    s = Setting.get()
-    bookCount = Book.query.count()
-    return """
-id: {}<br>
-fetchLastPage: {}<br>
-bookCount: {}<br>
-""".format(
-        s.id,
-        s.fetchLastPage,
-        bookCount)
+    return render_template('settings.html',
+        adminRootPath=ADMIN_ROOT_PARH,
+        setting=Setting.get(),
+        bookCount=Book.query.count())
 
 
 @app.route('/{}/useradd'.format(ADMIN_ROOT_PARH))
@@ -115,6 +109,7 @@ def adminLogs():
         page = pageMax
     logs = Log.query.order_by(Log.id.desc()).limit(countPage).offset(countPage * (page - 1)).all()
     return render_template('logs.html',
+        adminRootPath=ADMIN_ROOT_PARH,
         logs=logs,
         page=page,
         pageMax=pageMax)
