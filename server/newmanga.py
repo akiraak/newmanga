@@ -1,9 +1,9 @@
-from flask import Flask, render_template, send_from_directory, g, request
+from flask import Flask, render_template, send_from_directory, g, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import math
 import os
-from .db import init_db, db, User, Book, UserBook, Setting, Log
-from .fetchbooks import fetchBooksFomrUrl, updateBooks
+from .db import init_db, db, User, Book, UserBook, Setting, Log, UserKeyword
+from .fetchbooks import fetchBooksFomrUrl, updateBooks, resetKeywords, updateUserbook
 
 
 app = Flask(__name__)
@@ -127,3 +127,50 @@ def adminFetchtest():
     return render_template('admin_fetchtest.html',
         adminRootPath=ADMIN_ROOT_PARH,
         books=books)
+
+
+@app.route('/{}/userkeywords'.format(ADMIN_ROOT_PARH))
+def adminUserkeywords():
+    keywords = UserKeyword.query.all()
+    return render_template('admin_userkeywords.html',
+        adminRootPath=ADMIN_ROOT_PARH,
+        keywords=keywords)
+
+
+@app.route('/{}/userkeyword_add'.format(ADMIN_ROOT_PARH), methods=['GET', 'POST'])
+def adminUserkeywordAdd():
+    books = []
+    if request.method == 'POST':
+        k = request.form.get('keyword')
+        print(k)
+        if k:
+            uk = UserKeyword(keyword=k, user_id=1)
+            db.session.add(uk)
+            db.session.commit()
+            updateUserbook()
+        return redirect(url_for('adminUserkeywords'))
+    else:
+        return render_template('admin_userkeyword_add.html',
+            adminRootPath=ADMIN_ROOT_PARH)
+
+
+@app.route('/{}/userkeyword_delete/<int:id>'.format(ADMIN_ROOT_PARH))
+def adminUserkeywordDelete(id):
+    print(id)
+    UserKeyword.query.filter_by(id=id).delete()
+    db.session.commit()
+    updateUserbook()
+    return redirect(url_for('adminUserkeywords'))
+
+
+@app.route('/{}/reset_keywords'.format(ADMIN_ROOT_PARH))
+def adminResetKeywords():
+    resetKeywords()
+    return "OK"
+
+
+@app.route('/{}/update_userbook'.format(ADMIN_ROOT_PARH))
+def adminUpdateuserbook():
+    updateUserbook()
+    return "OK"
+

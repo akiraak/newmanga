@@ -1,0 +1,21 @@
+{% extends "admin_base.html" %}
+{% import 'pagination.html' as pagination %}
+
+{% block main %}
+<div>
+  <form method="POST">
+    <div class="form-group">
+      <label for="keyword">Keyword</label>
+      <input class="form-control" name="keyword" id="keyword">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>      
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+$(function() {
+});
+</script>
+{% endblock %}

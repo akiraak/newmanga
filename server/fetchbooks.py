@@ -4,7 +4,7 @@ import re
 import requests
 from sqlalchemy import or_
 import time
-from .db import db, Book, User, UserBook, Setting
+from .db import db, Book, User, UserBook, UserKeyword, Setting
 
 
 def bookInfoFromHtml(tree):
@@ -210,9 +210,21 @@ keywords = [
 ]
 
 
+def resetKeywords():
+    UserKeyword.query.delete()
+    for k in keywords:
+        uk = UserKeyword()
+        uk.user_id = 1
+        uk.keyword = k
+        db.session.add(uk)
+    db.session.commit()
+    updateUserbook()
+
+
 def updateUserbook():
     UserBook.query.delete()
     user = User.query.first()
+    keywords = (uk.keyword for uk in UserKeyword.query.filter_by(user_id=1).all())
     if user:
         books = Book.query.filter(or_(Book.title.like('%{}%'.format(k)) for k in keywords)).all()
         for book in books:

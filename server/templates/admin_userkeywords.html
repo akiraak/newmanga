@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+
+{% block style %}
+<style>
+  .add {
+    margin: 20px 0;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="add"><a href="/{{adminRootPath}}/userkeyword_add">Add</a></div>
+<div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">id</th>
+        <th scope="col">userId</th>
+        <th scope="col">keyword</th>
+        <th scope="col">control</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for k in keywords %}
+      <tr>
+        <td>{{ k.id }}</td>
+        <td>{{ k.user_id }}</td>
+        <td>{{ k.keyword }}</td>
+        <td><a href="/{{adminRootPath}}/userkeyword_delete/{{k.id}}">Delete</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
