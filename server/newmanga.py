@@ -30,11 +30,11 @@ def getPage():
 def index():
     page = getPage()
     bookAllCount = Book.query.count()
-    bookCountPage = 50
+    bookCountPage = 100
     pageMax = math.ceil(bookAllCount / bookCountPage)
     if page > pageMax:
         page = pageMax
-    books = Book.query.order_by(Book.date.desc()).limit(bookCountPage).offset(bookCountPage * (page - 1)).all()
+    books = Book.query.order_by(Book.id.desc()).limit(bookCountPage).offset(bookCountPage * (page - 1)).all()
     return render_template('index.html',
         books=books,
         page=page,
