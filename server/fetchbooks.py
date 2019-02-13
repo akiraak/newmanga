@@ -100,7 +100,9 @@ def fetchBooksFomrUrl(url):
 def updateBooks():
     setting = Setting.get()
     updateBookCount = 0
-    for (i, pageNo) in enumerate(range(setting.fetchLastPage, 200)):
+    startPage = setting.fetchLastPage
+    endPage = 0
+    for (i, pageNo) in enumerate(range(startPage, 200)):
         time.sleep(10)
         url = 'https://www.amazon.co.jp/gp/search/?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page={}&bbn=466280&ie=UTF8&qid=1549690134'.format(pageNo)
         books = fetchBooksFomrUrl(url)
@@ -111,6 +113,7 @@ def updateBooks():
             else:
                 setting.fetchLastPage = pageNo
             db.session.commit()
+            endPage = pageNo
             break
         for book in books:
             existBook = Book.query.filter_by(asin = book.asin).first()
@@ -133,7 +136,7 @@ def updateBooks():
             updateBookCount += 1
         db.session.commit()
     updateUserbook()
-    return updateBookCount
+    return updateBookCount, startPage, endPage
 
 
 keywords = [
