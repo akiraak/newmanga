@@ -62,8 +62,8 @@ def userbooks():
 
 @app.cli.command()
 def fetchbooks():
-    updateBookCount, startPage, endPage = updateBooks()
-    Log.add('Fetch {} books. Page {}-{}.'.format(updateBookCount, startPage, endPage))
+    updateBookCount, newBookCount, startPage, endPage = updateBooks()
+    Log.add('Fetch {}(new {}) books. Page {}-{}.'.format(updateBookCount, newBookCount, startPage, endPage))
 
 
 @app.route('/{}/'.format(ADMIN_ROOT_PARH))

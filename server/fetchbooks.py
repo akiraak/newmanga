@@ -102,6 +102,7 @@ def updateBooks():
     updateBookCount = 0
     startPage = setting.fetchLastPage
     endPage = 0
+    newBookCount = 0
     for (i, pageNo) in enumerate(range(startPage, 200)):
         time.sleep(10)
         url = 'https://www.amazon.co.jp/gp/search/?rh=n%3A465392%2Cn%3A%21465610%2Cn%3A466280%2Cp_n_publication_date%3A2315442051%7C2285539051&page={}&bbn=466280&ie=UTF8&qid=1549690134'.format(pageNo)
@@ -133,10 +134,11 @@ def updateBooks():
                 existBook.html = book.html
             else:
                 db.session.add(book)
+                newBookCount += 1
             updateBookCount += 1
         db.session.commit()
     updateUserbook()
-    return updateBookCount, startPage, endPage
+    return updateBookCount, newBookCount, startPage, endPage
 
 
 keywords = [
