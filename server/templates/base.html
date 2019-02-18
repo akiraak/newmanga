@@ -43,10 +43,18 @@
     <div class="navbar-collapse collapse" id="navbarCollapse" style="">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/">All <span class="sr-only">(current)</span></a>
+          {% if request.path == "/" %}
+            <a class="nav-link active" href="/">All <span class="sr-only">(current)</span></a>
+          {% else %}
+            <a class="nav-link" href="/">All <span class="sr-only">(current)</span></a>
+          {% endif %}
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/userbooks">User</a>
+          {% if request.path == "/userbooks" %}
+            <a class="nav-link active" href="/userbooks">User</a>
+          {% else %}
+            <a class="nav-link" href="/userbooks">User</a>
+          {% endif %}
         </li>
       </ul>
     </div>

@@ -41,16 +41,32 @@
       <div class="navbar-collapse collapse" id="navbarCollapse" style="">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/{{adminRootPath}}/settings">Settings</a>
+            {% if request.path == "/%s/settings" % adminRootPath %}
+              <a class="nav-link active" href="/{{adminRootPath}}/settings">Settings</a>
+            {% else %}
+              <a class="nav-link" href="/{{adminRootPath}}/settings">Settings</a>
+            {% endif %}
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/{{adminRootPath}}/logs">Logs</a>
+            {% if request.path == "/%s/logs" % adminRootPath %}
+              <a class="nav-link active" href="/{{adminRootPath}}/logs">Logs</a>
+            {% else %}
+              <a class="nav-link" href="/{{adminRootPath}}/logs">Logs</a>
+            {% endif %}
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/{{adminRootPath}}/fetchtest">FetchTest</a>
+            {% if request.path == "/%s/fetchtest" % adminRootPath %}
+              <a class="nav-link active" href="/{{adminRootPath}}/fetchtest">FetchTest</a>
+            {% else %}
+              <a class="nav-link" href="/{{adminRootPath}}/fetchtest">FetchTest</a>
+            {% endif %}
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/{{adminRootPath}}/userkeywords">keywords</a>
+            {% if request.path == "/%s/userkeywords" % adminRootPath %}
+              <a class="nav-link active" href="/{{adminRootPath}}/userkeywords">Keywords</a>
+            {% else %}
+              <a class="nav-link" href="/{{adminRootPath}}/userkeywords">Keywords</a>
+            {% endif %}
           </li>
         </ul>
       </div>
